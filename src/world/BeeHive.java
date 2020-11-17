@@ -64,7 +64,11 @@ public class BeeHive {
             this.bees.add(Bee.createBee(Role.WORKER, Resource.POLLEN, this));
         }
 
-        // TODO create queen and drone bees
+        for (int i=0; i<numDrones; ++i ) {
+            this.bees.add(Bee.createBee(Role.DRONE, Resource.NONE, this));
+        }
+
+        this.bees.add(Bee.createBee(Role.QUEEN, Resource.NONE, this));
 
         this.active = true;
         this.numBorn = this.bees.size();
@@ -212,7 +216,8 @@ public class BeeHive {
      * @param bee the bee who perished
      */
     public synchronized void beePerished (Bee bee){
-        // TODO
+        bee.interrupt();
+        perishedBees.add(bee);
     }
 
     /**
@@ -222,7 +227,8 @@ public class BeeHive {
      * @param bee the new bee
      */
     public synchronized void addBee(Bee bee) {
-        // TODO
+        bees.add(bee);
+        bee.start();
     }
 
     /**
@@ -232,8 +238,7 @@ public class BeeHive {
      * @return do we have enough resources?
      */
     public synchronized boolean hasResources() {
-        // TODO
-        return false;
+        return nectar >= 1 && pollen >= 1;
     }
 
     /**
@@ -243,7 +248,8 @@ public class BeeHive {
      * @rit.pre {@link BeeHive#hasResources()} is true
      */
     public synchronized void claimResources() {
-        // TODO
+        nectar--;
+        pollen--;
     }
 
     /**
