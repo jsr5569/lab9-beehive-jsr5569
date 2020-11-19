@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * uses the resources in order to support reproduction.
  *
  * @author Sean Strout @ RIT CS
- * @author YOUR NAME HERE
+ * @author Jarred Reepmeyer
  */
 public class BeeHive {
     /** the field of flowers */
@@ -57,18 +57,18 @@ public class BeeHive {
         this.nectar = this.pollen = 0;
 
         // create the bees!
+        this.bees.add(Bee.createBee(Role.QUEEN, Resource.NONE, this));
+
+        for (int i=0; i<numDrones; ++i ) {
+            this.bees.add(Bee.createBee(Role.DRONE, Resource.NONE, this));
+        }
+
         for (int i=0; i<numNectarWorkers; ++i ) {
             this.bees.add(Bee.createBee(Role.WORKER, Resource.NECTAR, this));
         }
         for (int i=0; i<numPollenWorkers; ++i ) {
             this.bees.add(Bee.createBee(Role.WORKER, Resource.POLLEN, this));
         }
-
-        for (int i=0; i<numDrones; ++i ) {
-            this.bees.add(Bee.createBee(Role.DRONE, Resource.NONE, this));
-        }
-
-        this.bees.add(Bee.createBee(Role.QUEEN, Resource.NONE, this));
 
         this.active = true;
         this.numBorn = this.bees.size();
@@ -170,7 +170,7 @@ public class BeeHive {
      */
     public void begin() {
         System.out.println("*BH* Bee hive begins buzzing!");
-        for(Bee b : bees){
+        for(Bee b : bees){//Start all the bees in the beehive
             b.start();
         }
     }
@@ -197,7 +197,7 @@ public class BeeHive {
         // flip the switch
         this.active = false;
 
-        for(Bee b : bees){
+        for(Bee b : bees){//Make all the bees in the beehive wait until the current thread is done
             try {
                 b.join();
             }catch(InterruptedException e){
@@ -216,7 +216,7 @@ public class BeeHive {
      * @param bee the bee who perished
      */
     public synchronized void beePerished (Bee bee){
-        bee.interrupt();
+        bee.interrupt();//End the drone's thread
         perishedBees.add(bee);
     }
 
@@ -228,6 +228,7 @@ public class BeeHive {
      */
     public synchronized void addBee(Bee bee) {
         bees.add(bee);
+        this.numBorn++;//Update the number of bees that have been born
         bee.start();
     }
 

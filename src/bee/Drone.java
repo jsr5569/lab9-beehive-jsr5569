@@ -2,6 +2,7 @@ package bee;
 
 import world.BeeHive;
 
+
 /**
  * The male drone bee has a tough life.  His only job is to mate with the queen
  * by entering the queen's chamber and awaiting his royal highness for some
@@ -9,9 +10,12 @@ import world.BeeHive;
  * endophallus gets ripped off and he perishes soon after mating.
  *
  * @author Sean Strout @ RIT CS
- * @author YOUR NAME HERE
+ * @author Jarred Reepmeyer
  */
 public class Drone extends Bee {
+
+    /** whether or not the drone has mated with the queen*/
+    private boolean mated;
 
     /**
      * When the drone is created they should retrieve the queen's
@@ -21,8 +25,17 @@ public class Drone extends Bee {
      */
     public Drone(BeeHive beeHive){
         super(Role.DRONE, beeHive);
+        mated = false;
     }
 
+
+    /**
+     * When the drone has mated with the queen, this method is called to change that
+     * drone's mated variable to true.
+     */
+    public void setMated(){
+        this.mated = true;
+    }
     /**
      * When the drone runs, they check if the bee hive is active.  If so,
      * they perform their sole task of entering the queen's chamber.
@@ -39,6 +52,18 @@ public class Drone extends Bee {
      * sleeping.
      */
     public void run() {
-        // TODO
+        if(beeHive.isActive()){
+            beeHive.getQueensChamber().enterChamber(this);
+            if(this.mated) {
+                try {
+                    this.sleep(1000);//Simulated the time the drone was mating
+                    beeHive.beePerished(this);//Kills the bee
+                    System.out.println("*D*  " + this + " has perished!");
+
+                }catch(InterruptedException e){
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

@@ -12,7 +12,7 @@ import world.FlowerField;
  * before heading out to the fields again.
  *
  * @author Sean Strout @ RIT CS
- * @author YOUR NAME HERE
+ * @author Jarred Reepmeyer
  */
 public class Worker extends Bee {
     /**
@@ -75,12 +75,12 @@ public class Worker extends Bee {
         while(beeHive.isActive()){
             flowerField.enterField(this);
             try{
-                this.sleep(WORKER_SLEEP_TIME_MS);
+                this.sleep(WORKER_SLEEP_TIME_MS);//Simulates the time it takes to gather resources
             }catch(InterruptedException e){
                 e.printStackTrace();
             }
             flowerField.exitField(this);
-            beeHive.deposit(this.resource, this);
+            beeHive.deposit(this.resource, this);//Deposit the collected resources
         }
     }
 }

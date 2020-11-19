@@ -1,5 +1,6 @@
 package bee;
 
+import util.RandomBee;
 import world.BeeHive;
 
 /**
@@ -18,7 +19,7 @@ import world.BeeHive;
  * netflix before she chills with her next drone.
  *
  * @author Sean Strout @ RIT CS
- * @author YOUR NAME HERE
+ * @author Jarred Reepmeyer
  */
 public class Queen extends Bee {
     /**
@@ -65,6 +66,43 @@ public class Queen extends Bee {
      * still waiting in her chamber.
      */
     public void run() {
-        // TODO
+        while(beeHive.isActive()){
+            if(beeHive.hasResources() && beeHive.getQueensChamber().hasDrone()){
+                beeHive.getQueensChamber().summonDrone();
+                try{
+                    this.sleep(MATE_TIME_MS);
+                    int numBeesBirthed = 0;//The actual number of bees that are birthed by the queen
+                    int numBees = RandomBee.nextInt(MIN_NEW_BEES, MAX_NEW_BEES);//Generates a random number of bees for the queen to attempt to birth
+                    for(int x=0; x< numBees ; x++){
+                        if(beeHive.hasResources()) {
+                            int randomNum = RandomBee.nextInt(1, 5);//Generates a random number to determine which type of bee will be birthed
+                            switch (randomNum) {
+                                case 1 -> {
+                                    beeHive.addBee(createBee(Role.WORKER, Worker.Resource.POLLEN, this.beeHive));
+                                    this.beeHive.claimResources();//Consumes the amount of resources required for the birth of a new bee
+                                    numBeesBirthed++;
+                                }
+                                case 2 -> {
+                                    beeHive.addBee(createBee(Role.WORKER, Worker.Resource.NECTAR, this.beeHive));
+                                    this.beeHive.claimResources();
+                                    numBeesBirthed++;
+                                }
+                                default -> {
+                                    beeHive.addBee(createBee(Role.DRONE, Worker.Resource.NONE, this.beeHive));
+                                    this.beeHive.claimResources();
+                                    numBeesBirthed++;
+                                }
+                            }
+                        }
+                    }
+                    System.out.println("*Q*  Queen birthed " + numBeesBirthed + " children");
+                    this.sleep(SLEEP_TIME_MS);//Simulates the sleep the queen gets after birthing the bees
+                }catch(InterruptedException e){
+                    e.printStackTrace();
+                }
+            }
+        }
+        while(beeHive.getQueensChamber().hasDrone())
+            this.beeHive.getQueensChamber().dismissDrone();//Dismiss all the bees that are waiting to mate
     }
 }

@@ -38,15 +38,15 @@ public class FlowerField {
      * @param w the worker bee entering the field
      */
     public synchronized void enterField(Worker w){
-        System.out.println("*FF*" + w + " enters field");
-        while (this.numWorkers == MAX_WORKERS){
+        System.out.println("*FF* " + w + " enters field");
+        while (this.numWorkers == MAX_WORKERS){//Have the workers wait until there is an open space in the field to collect their resource
             try{
                 wait();
             } catch (InterruptedException e){
                 e.printStackTrace();
             }
         }
-        numWorkers++;
+        numWorkers++;//Increase the number of workers in the field when a worker enters the field
     }
 
 
@@ -63,8 +63,8 @@ public class FlowerField {
      */
     public synchronized void exitField(Worker w){
         this.numWorkers--;
-        notify();
-        System.out.println("*FF*" + w + " leaves field");
+        notify();//Let the other worker bees know there is an opening in the field
+        System.out.println("*FF* " + w + " leaves field");
     }
 
 }
